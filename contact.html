@@ -52,19 +52,19 @@
             <div class="navbar-default border-bottom border-color-light-white">
 
                 <!-- start top search -->
-                <div class="top-search bg-secondary">
+                <!-- <div class="top-search bg-secondary">
                     <div class="container-fluid px-lg-1-6 px-xl-2-5 px-xxl-2-9">
-                        <form class="search-form" action="https://fixityhtml.websitelayout.net/search.html" method="GET" accept-charset="utf-8">
+                        <form class="search-form" action="https://api.web3forms.com/submit" method="GET" accept-charset="utf-8">
                             <div class="input-group">
                                 <span class="input-group-addon cursor-pointer">
                                     <button class="search-form_submit fas fa-search text-white" type="submit"></button>
                                 </span>
-                                <input type="text" class="search-form_input form-control" name="s" autocomplete="off" placeholder="Type &amp; hit enter...">
+                                <input type="hidden" name="access_key" value="b04176d0-af78-46c6-89e6-3e4a4bd5e2cc">
                                 <span class="input-group-addon close-search mt-1"><i class="fas fa-times"></i></span>
                             </div>
                         </form>
                     </div>
-                </div>
+                </div> -->
                 <!-- end top search -->
 
                 <div class="container-fluid px-lg-1-6 px-xl-2-5 px-xxl-2-9">
@@ -272,7 +272,7 @@
                                 <span>SEND MESSAGE</span>
                                 <h2 class="h1">We Are Here To Help You.</h2>
                             </div>
-                            <form class="quform" action="https://fixityhtml.websitelayout.net/quform/contact.php" method="post" enctype="multipart/form-data" onclick="">
+                            <form class="quform" method="post" id="form" enctype="multipart/form-data" onclick="">
 
                                 <div class="quform-elements">
 
@@ -283,6 +283,7 @@
                                             <div class="quform-element form-group">
                                                 <label for="name">Your Name <span class="quform-required">*</span></label>
                                                 <div class="quform-input">
+                                                    <input type="hidden" name="access_key" value="b04176d0-af78-46c6-89e6-3e4a4bd5e2cc">
                                                     <input class="form-control" id="name" type="text" name="name" placeholder="Your name here" />
                                                 </div>
                                             </div>
@@ -369,6 +370,10 @@
                                 </div>
 
                             </form>
+
+                           <!-- web3form id -->
+                           <div id="result"></div>
+                            
                         </div>
                     </div>
                 </div>
@@ -602,9 +607,6 @@
 
     </div>
 
-
-
-
     <!--  -->
     <div class="buy-theme alt-font d-none d-lg-inline-block"><a href="https://wa.me/+971547164381" target="_blank"><i class="fas fa-cart-plus"></i><span>WhatsApp </span></a></div>
 
@@ -637,8 +639,52 @@
     <!-- form plugins js -->
     <script src="quform/js/plugins.js"></script>
 
-    <!-- form scripts js -->
-    <script src="quform/js/scripts.js"></script>
+    <!-- web3forms form scripts js -->
+    <script>
+        const form = document.getElementById('form');
+        const result = document.getElementById('result');
+        
+        form.addEventListener('submit', function(e) {
+            const formData = new FormData(form);
+            e.preventDefault();
+        
+            const object = Object.fromEntries(formData);
+            const json = JSON.stringify(object);
+        
+            result.innerHTML = "Please wait..."
+        
+            fetch('https://api.web3forms.com/submit', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: json
+                })
+                .then(async (response) => {
+                    let json = await response.json();
+                    if (response.status === 200) {
+                        result.innerHTML = json.message;
+                    } else {
+                        console.log(response);
+                        result.innerHTML = json.message;
+                    }
+                })
+                .catch(error => {
+                    console.log(error);
+                    result.innerHTML = "Something went wrong!";
+                })
+                .then(function() {
+                    form.reset();
+                    setTimeout(() => {
+                        result.style.display = "none";
+                    }, 3000);
+                });
+        });
+        </script>
+
+        <!-- web3forms form scripts js  END-->
+    
 
     <!-- all js include end -->
 
